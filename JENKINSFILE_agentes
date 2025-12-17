@@ -20,13 +20,13 @@ pipeline {
     stage('Tests') {
       parallel {
         stage('Unit') {
-
+          agent {label 'agent1'}
           steps {
             catchError(buildResult: 'UNSTABLE', stageResult: 'FAILURE') {
               unstash name: 'code'
               bat '''
-                set PYTHONPATH=%WORKSPACE%
-                pytest --junitxml=result-unit.xml test\\unit
+                export PYTHONPATH=${WORKSPACE}
+                /home/agent1/.local/bin/pytest --junitxml=result-unit.xml test/unit
               '''
               stash name: 'unit-res', includes: 'result-unit.xml'
             }
@@ -39,6 +39,7 @@ pipeline {
             catchError(buildResult: 'UNSTABLE', stageResult: 'FAILURE') {
               unstash name: 'code'
               bat '''
+                set PYTHONPATH=%WORKSPACE%
                 set FLASK_APP=app\\api.py
                 start flask run 
                 start /B java -jar D:\\Proyectos\\ESTUDIOS\\UNIR\\DEVOPS\\PRACTICAS\\wiremock\\wiremock-standalone-3.13.2.jar --port 9090 --root-dir %WORKSPACE%\\test\\wiremock
