@@ -29,7 +29,6 @@ pipeline {
                 pytest --junitxml=result-unit.xml test\\unit
               '''
               stash name: 'unit-res', includes: 'result-unit.xml'
-              bat 'rmdir %WORKSPACE%'
             }
           }
         }
@@ -47,7 +46,6 @@ pipeline {
                 pytest --junitxml=result-rest.xml test\\rest
               '''
               stash name: 'rest-res', includes: 'result-rest.xml'
-              bat 'rmdir %WORKSPACE%'
             }
           }
         }
