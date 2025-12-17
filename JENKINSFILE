@@ -29,6 +29,7 @@ pipeline {
                             set FLASK_APP= app\\api.py
                             set FLASK_ENV=development
                             start flask run
+                            ping -n 10 127.0.0.1
                             java -jar D:\\Proyectos\\ESTUDIOS\\UNIR\\DEVOPS\\PRACTICAS\\wiremock\\wiremock-standalone-3.13.2.jar --port 9090 --root-dir %WORKSPACE%\\test\\wiremock
                             SET PYTHONPATH=%WORKSPACE%
                             ping -n 10 127.0.0.1
