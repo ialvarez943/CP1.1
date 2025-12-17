@@ -1,0 +1,66 @@
+pipeline {
+  agent any 
+
+  options {skipDefaultCheckout()}
+
+  stages {
+    stage('Get Code') {
+      steps {
+        git branch: 'develop', url: 'https://github.com/ialvarez943/CP1.1.git'
+        stash name: 'code', includes: '**'
+      }
+    }
+
+    stage('Build') {
+      steps {
+          echo 'Esto es Python, no hay que compilar nada!'
+      }
+    }
+
+    stage('Tests') {
+      parallel {
+        stage('Unit') {
+
+          steps {
+            catchError(buildResult: 'UNSTABLE', stageResult: 'FAILURE') {
+              unstash name: 'code'
+              bat '''
+                set PYTHONPATH=%WORKSPACE%
+                pytest --junitxml=result-unit.xml test\\unit
+              '''
+              stash name: 'unit-res', includes: 'result-unit.xml'
+              rmdir %WORKSPACE%
+            }
+          }
+        }
+
+        stage('Rest') {
+
+          steps {
+            catchError(buildResult: 'UNSTABLE', stageResult: 'FAILURE') {
+              unstash name: 'code'
+              bat '''
+                set FLASK_APP=app\\api.py
+                start flask run 
+                start /B java -jar D:\\Proyectos\\ESTUDIOS\\UNIR\\DEVOPS\\PRACTICAS\\wiremock\\wiremock-standalone-3.13.2.jar --port 9090 --root-dir %WORKSPACE%\\test\\wiremock
+                ping -n 10 127.0.0.1
+                pytest --junitxml=result-rest.xml test\\rest
+              '''
+              stash name: 'rest-res', includes: 'result-rest.xml'
+              rmdir %WORKSPACE%
+            }
+          }
+        }
+      }
+    }
+    stage('Results') {
+      steps {
+        unstash name: 'unit-res'
+        unstash name: 'rest-res'
+
+        junit 'result*.xml'
+      }
+      
+    }
+  }
+}
