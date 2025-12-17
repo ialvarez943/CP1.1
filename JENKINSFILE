@@ -30,7 +30,7 @@ pipeline {
                             set FLASK_ENV=development
                             start flask run
                             ping -n 10 127.0.0.1
-                            java -jar D:\\Proyectos\\ESTUDIOS\\UNIR\\DEVOPS\\PRACTICAS\\wiremock\\wiremock-standalone-3.13.2.jar --port 9090 --root-dir %WORKSPACE%\\test\\wiremock
+                            start /B java -jar D:\\Proyectos\\ESTUDIOS\\UNIR\\DEVOPS\\PRACTICAS\\wiremock\\wiremock-standalone-3.13.2.jar --port 9090 --root-dir %WORKSPACE%\\test\\wiremock
                             SET PYTHONPATH=%WORKSPACE%
                             ping -n 10 127.0.0.1
                             pytest --junitxml=result-unit.xml test\\rest
