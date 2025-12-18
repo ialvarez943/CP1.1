@@ -41,8 +41,6 @@ pipeline {
               bat '''
                 export FLASK_APP=app/api.py                          
                 /home/agent2/.local/bin/flask run &
-                sleep 4
-                java -jar /home/agent2/wiremock/wiremock-standalone-3.3.1.jar --port 9090 --root-dir /home/agent2/wiremock &
                 export PYTHONPATH=${WORKSPACE}
                 sleep 15
                 /home/agent2/.local/bin/pytest --junitxml=result-rest.xml test/rest
