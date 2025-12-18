@@ -26,7 +26,7 @@ pipeline {
               unstash name: 'code'
               sh '''
                 export PYTHONPATH=${WORKSPACE}
-                /home/agent1/.local/bin/pytest --junitxml=result-unit.xml test/unit
+                pytest -q --junitxml=result-unit.xml test/unit
               '''
               stash name: 'unit-res', includes: 'result-unit.xml'
             }
@@ -40,10 +40,12 @@ pipeline {
               unstash name: 'code'
               sh '''
                 export FLASK_APP=app/api.py                          
-                /home/agent2/.local/bin/flask run &
+                flask run &
+                FLASK_PID=$!
                 export PYTHONPATH=${WORKSPACE}
                 sleep 15
-                /home/agent2/.local/bin/pytest --junitxml=result-rest.xml test/rest
+                pytest -q --junitxml=result-rest.xml test/rest
+                kill $FLASK_PID
               '''
               stash name: 'rest-res', includes: 'result-rest.xml'
             }
