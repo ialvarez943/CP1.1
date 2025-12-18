@@ -24,7 +24,7 @@ pipeline {
           steps {
             catchError(buildResult: 'UNSTABLE', stageResult: 'FAILURE') {
               unstash name: 'code'
-              bat '''
+              sh '''
                 export PYTHONPATH=${WORKSPACE}
                 /home/agent1/.local/bin/pytest --junitxml=result-unit.xml test/unit
               '''
@@ -38,7 +38,7 @@ pipeline {
           steps {
             catchError(buildResult: 'UNSTABLE', stageResult: 'FAILURE') {
               unstash name: 'code'
-              bat '''
+              sh '''
                 export FLASK_APP=app/api.py                          
                 /home/agent2/.local/bin/flask run &
                 export PYTHONPATH=${WORKSPACE}
