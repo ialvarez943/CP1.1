@@ -79,6 +79,10 @@ pipeline {
     stage('Performance') {
       steps {
         bat '''
+          SET PYTHONPATH=%WORKSPACE%
+          SET FLASK_APP=app/api.py                          
+          start flask run
+          ping -n 6 127.0.0.1
           D:\\Proyectos\\ESTUDIOS\\UNIR\\DEVOPS\\PRACTICAS\\apache-jmeter-5.6.3\\bin\\jmeter -n -t test\\jmeter\\flask.jmx -f -l flask.jtl
         '''
         perfReport sourceDataFiles: 'flask.jtl'
