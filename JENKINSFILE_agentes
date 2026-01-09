@@ -66,6 +66,16 @@ pipeline {
         recordCoverage qualityGates: [[criticality: 'ERROR', integerThreshold: 85, metric: 'LINE', threshold: 85.0], [criticality: 'NOTE', integerThreshold: 99, metric: 'MODULE', threshold: 95.0], [criticality: 'NOTE', integerThreshold: 65, metric: 'BRANCH', threshold: 65.0]], tools: [[parser: 'COBERTURA']]
       }
     }
+
+    stage('Security') {
+      steps {
+        bat '''
+          bandit --exit-zero -r . -f custom -o bandit.out --msg-template "{abspath}:{line}: [{test_id}] {msg}"
+        '''
+        recordIssues tools: [pyLint(name: 'Bandit', pattern: 'bandit.out')], qualityGates: [[threshold: 1, type: 'TOTAL', unstable: true], [threshold: 2, type: 'TOTAL', unstable: false]]
+      }
+    }
+
     stage('Results') {
       steps {
         unstash name: 'unit-res'
