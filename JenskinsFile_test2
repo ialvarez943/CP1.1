@@ -59,8 +59,8 @@ pipeline {
       }
       post {
         always {
-          stash name: 'coverage-res', includes: 'coverage.xml' allowEmpty: true
-          stash name: 'unit-res', includes: 'result-test.xml' allowEmpty: true
+          stash name: 'coverage-res', includes: 'coverage.xml', allowEmpty: true
+          stash name: 'unit-res', includes: 'result-test.xml', allowEmpty: true
         }
       }
     }
