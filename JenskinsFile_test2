@@ -19,13 +19,15 @@ pipeline {
         bat ''' 
           flake8 --exit-zero --format=pylint app > flake8.out
         '''
-        recordIssues 
+        recordIssues(
+          sourceCodeRetention: 'LAST_BUILD', 
           tools: [flake8(name: 'Flake8', pattern: 'flake8.out')], 
           qualityGates: [
             [threshold: 8, type: 'TOTAL', unstable: true], 
             [threshold: 10, type: 'TOTAL', unstable: false]
           ],
           enabledForFailure: true
+        )
       }
     }
 
@@ -34,12 +36,13 @@ pipeline {
         bat '''
           bandit --exit-zero -r . -f custom -o bandit.out --msg-template "{abspath}:{line}: [{test_id}] {msg}"
         '''
-        recordIssues 
+        recordIssues(
           tools: [pyLint(name: 'Bandit', pattern: 'bandit.out')], 
           qualityGates: [
             [threshold: 1, type: 'TOTAL', unstable: true], 
             [threshold: 2, type: 'TOTAL', unstable: false]
           ]
+        )
       }
     }
 
@@ -84,7 +87,7 @@ pipeline {
         stage ('Coverage') {
           steps {
             unstash name: 'test-res'
-            recordCoverage 
+            recordCoverage(
               tools: [
                 [parser: 'COBERTURA']
               ]
@@ -93,6 +96,7 @@ pipeline {
                 [criticality: 'NOTE', integerThreshold: 99, metric: 'MODULE', threshold: 95.0], 
                 [criticality: 'NOTE', integerThreshold: 65, metric: 'BRANCH', threshold: 65.0]
               ]
+            )
           }
         }
       }
