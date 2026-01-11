@@ -76,7 +76,7 @@ pipeline {
                   set FLASK_APP=app\\api.py
                   start flask run 
                   ping -n 6 127.0.0.1
-                  pytest --junitxml=result-unit.xml test\\rest
+                  pytest --junitxml=result-rest.xml test\\rest
               '''
               stash name: 'rest-res', includes: 'result-rest.xml'
             }
