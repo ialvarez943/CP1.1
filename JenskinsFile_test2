@@ -73,6 +73,7 @@ pipeline {
             catchError(buildResult: 'UNSTABLE', stageResult: 'FAILURE') {
               unstash name: 'code'
               bat '''
+                  SET PYTHONPATH=%WORKSPACE%
                   set FLASK_APP=app\\api.py
                   start flask run 
                   ping -n 6 127.0.0.1
