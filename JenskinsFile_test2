@@ -52,10 +52,11 @@ pipeline {
           unstash name: 'code'
           bat '''
               SET PYTHONPATH=%WORKSPACE%
-              coverage run --branch --source=app --omit=app\\__init__.py,app\\api.py -m pytest test\\unit
-              coverage xml -o result-test.xml
+              coverage run --branch --source=app --omit=app\\__init__.py,app\\api.py -m pytest test\\unit --junitxml=result-test.xml
+              coverage xml -o coverage.xml
             '''
-          stash name: 'test-res', includes: 'result-test.xml'
+          stash name: 'coverage-res', includes: 'coverage.xml'
+          stash name: 'unit-res', includes: 'result-test.xml'
         }
       }
     }
@@ -63,7 +64,6 @@ pipeline {
     stage('Tests') {
       parallel {
         stage('Rest') {
-          agent {label 'Agent2'}
           steps {
             catchError(buildResult: 'UNSTABLE', stageResult: 'FAILURE') {
               unstash name: 'code'
@@ -80,13 +80,13 @@ pipeline {
         }
         stage('Unit') {
           steps {
-            unstash name: 'test-res'
+            unstash name: 'unit-res'
             junit 'result-test.xml'
           }
         }
         stage ('Coverage') {
           steps {
-            unstash name: 'test-res'
+            unstash name: 'coverage-res'
             recordCoverage(
               tools: [
                 [parser: 'COBERTURA']
