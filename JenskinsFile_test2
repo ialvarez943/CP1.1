@@ -90,7 +90,7 @@ pipeline {
             recordCoverage(
               tools: [
                 [parser: 'COBERTURA']
-              ]
+              ],
               qualityGates: [
                 [criticality: 'ERROR', integerThreshold: 85, metric: 'LINE', threshold: 85.0], 
                 [criticality: 'NOTE', integerThreshold: 99, metric: 'MODULE', threshold: 95.0], 
