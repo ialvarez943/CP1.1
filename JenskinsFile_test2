@@ -76,7 +76,8 @@ pipeline {
                   SET PYTHONPATH=%WORKSPACE%
                   set FLASK_APP=app\\api.py
                   start flask run 
-                  ping -n 6 127.0.0.1
+                  start /B java -jar D:\\Proyectos\\ESTUDIOS\\UNIR\\DEVOPS\\PRACTICAS\\wiremock\\wiremock-standalone-3.13.2.jar --port 9090 --root-dir %WORKSPACE%\\test\\wiremock
+                  ping -n 10 127.0.0.1
                   pytest --junitxml=result-rest.xml test\\rest
               '''
               stash name: 'rest-res', includes: 'result-rest.xml'
