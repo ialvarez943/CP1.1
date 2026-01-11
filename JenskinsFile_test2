@@ -55,8 +55,12 @@ pipeline {
               coverage run --branch --source=app --omit=app\\__init__.py,app\\api.py -m pytest test\\unit --junitxml=result-test.xml
               coverage xml -o coverage.xml
             '''
-          stash name: 'coverage-res', includes: 'coverage.xml'
-          stash name: 'unit-res', includes: 'result-test.xml'
+        }
+      }
+      post {
+        always {
+          stash name: 'coverage-res', includes: 'coverage.xml' allowEmpty: true
+          stash name: 'unit-res', includes: 'result-test.xml' allowEmpty: true
         }
       }
     }
