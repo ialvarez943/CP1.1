@@ -38,10 +38,11 @@ pipeline {
         '''
         recordIssues(
           tools: [pyLint(name: 'Bandit', pattern: 'bandit.out')], 
-          qualityGates: [
-            [threshold: 1, type: 'TOTAL', unstable: true], 
-            [threshold: 2, type: 'TOTAL', unstable: false]
-          ]
+          qualityGates:[
+            [threshold: 2, type: 'TOTAL', unstable: true], 
+            [threshold: 4, type:'TOTAL', unstable: false]
+          ],
+          enabledForFailure: true
         )
       }
     }
@@ -74,8 +75,7 @@ pipeline {
               bat '''
                   set FLASK_APP=app\\api.py
                   start flask run 
-                  start /B java -jar D:\\Proyectos\\ESTUDIOS\\UNIR\\DEVOPS\\PRACTICAS\\wiremock\\wiremock-standalone-3.13.2.jar --port 9090 --root-dir %WORKSPACE%\\test\\wiremock
-                  ping -n 10 127.0.0.1
+                  ping -n 6 127.0.0.1
                   pytest --junitxml=result-unit.xml test\\rest
               '''
               stash name: 'rest-res', includes: 'result-rest.xml'
